@@ -4,7 +4,7 @@
 	
 	<artifactId>bindgen-parent</artifactId>
 	<groupId>org.bindgen</groupId>
-	<version>3.1.1</version>
+	<version>3.1.2</version>
 	<packaging>pom</packaging>
 	
 	<name>Bindgen (parent)</name>
@@ -57,45 +57,10 @@
 	</build>
 
 	<repositories>
-		<repository>
-			<id>bindgen</id>
-			<url>http://repo.joist.ws/</url>
-		</repository>
-            <repository> 
-                  <id>nexus.internal.releases</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url> 
-                  <snapshots>
-                     <enabled>false</enabled>
-                  </snapshots>
-            </repository>
-            <repository> 
-                  <id>nexus.internal.snapshots</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url> 
-                  <releases>
-                     <enabled>true</enabled>
-                  </releases>
-            </repository>
-
-            <repository>
-                <id>nexus.internal.third-party</id>
-                <url>https://nexus.vitry.intranet/content/repositories/nonCentralArtifacts/</url>
-            </repository>
-
 	</repositories>
 
     <distributionManagement>
-        <repository>
-            <id>nexus.internal.releases</id>
-            <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus.internal.snapshots</id>
-            <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
-        </snapshotRepository>
-        <site>
-           <id>maven.doc.smile</id>
-           <url>scp://pic-java.vitry.intranet/var/www/${project.groupId}/${project.artifactId}</url>
-        </site>
+
     </distributionManagement>
 
 
