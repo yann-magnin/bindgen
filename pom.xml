@@ -81,6 +81,7 @@
 		<url>git@github.com:apidae-tourisme/bindgen.git</url>
 		<connection>scm:git:git@github.com:apidae-tourisme/bindgen.git</connection>
 		<developerConnection>scm:git:https://github.com/apidae-tourisme/bindgen.git</developerConnection>
-	</scm>
+	  <tag>HEAD</tag>
+  </scm>
 
 </project>
