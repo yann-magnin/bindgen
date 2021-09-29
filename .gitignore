@@ -6,4 +6,5 @@ target
 **/.setting
 docs/.builddir
 docs/build
-
+/.idea
+*.iml
