@@ -4,7 +4,7 @@
 	
 	<artifactId>bindgen-parent</artifactId>
 	<groupId>org.bindgen</groupId>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>3.1.2</version>
 	<packaging>pom</packaging>
 	
 	<name>Bindgen (parent)</name>
@@ -81,6 +81,7 @@
 		<url>git@github.com:apidae-tourisme/bindgen.git</url>
 		<connection>scm:git:git@github.com:apidae-tourisme/bindgen.git</connection>
 		<developerConnection>scm:git:https://github.com/apidae-tourisme/bindgen.git</developerConnection>
-	</scm>
+	  <tag>3.1.2</tag>
+  </scm>
 
 </project>
