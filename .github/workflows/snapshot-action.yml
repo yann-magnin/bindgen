@@ -39,7 +39,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Build
-        run: mvn --batch-mode -DperformRelease Dmaven.javadoc.skip=true deploy
+        run: mvn --batch-mode -DperformRelease -Dmaven.javadoc.skip=true deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
