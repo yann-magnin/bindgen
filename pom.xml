@@ -64,9 +64,8 @@
 
 	<repositories>
 		<repository>
-			<id>github</id>
-			<name>Github packages</name>
-            <url>https://maven.pkg.github.com/apidae-tourisme/joist</url>
+				<id>bucket-release-repo</id>
+				<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
 		</repository>
 	</repositories>
 
