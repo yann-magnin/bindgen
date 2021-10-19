@@ -19,7 +19,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Verify
-        run: mvn --batch-mode --update-snapshots verify
+        run: mvn --batch-mode --update-snapshots -DperformRelease verify
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
@@ -39,7 +39,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Build
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode -DperformRelease Dmaven.javadoc.skip=true deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
