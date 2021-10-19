@@ -19,7 +19,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Verify
-        run: mvn --batch-mode --update-snapshots -DperformRelease verify
+        run: mvn --batch-mode --update-snapshots -DperformRelease -Dmaven.javadoc.skip=true verify
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
