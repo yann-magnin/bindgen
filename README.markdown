@@ -7,7 +7,7 @@ Import dependency using maven:
     <dependencyManagement>
       <dependencies>
           <dependency>
-            <groupId>fr.smile.core.components</groupId>
+            <groupId>org.bindgen</groupId>
             <artifactId>bindgen</artifactId>
             <version>3.1.2</version>
           </dependency>
