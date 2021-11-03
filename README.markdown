@@ -1,4 +1,26 @@
 
+Usage
+=====
+
+Import dependency using maven:
+
+    <dependencyManagement>
+      <dependencies>
+          <dependency>
+            <groupId>fr.smile.core.components</groupId>
+            <artifactId>bindgen-java</artifactId>
+            <version>3.1.2</version>
+          </dependency>
+      </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>bucket-release-repo</id>
+            <url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
+        </repository>
+    </repositories>
+
 Intro
 =====
 
@@ -39,7 +61,7 @@ Annotations
 
 Bindgen is implemented as JDK6 annotation processor. When configured in your IDE (e.g. with project-specific settings in Eclipse), as soon as you add a `@Bindable` annotation to a class `Foo`, and hit save, the IDE immediately invokes the [Processor][2] behind the scenes and `FooBinding` is created.
 
-[2]: /stephenh/bindgen/blob/master/processor/src/main/java/org/bindgen/processor/Processor.java
+[2]: /apidae-tourisme/bindgen/blob/master/processor/src/main/java/org/bindgen/processor/Processor.java
 
 Another Example
 ===============
@@ -96,7 +118,7 @@ None of the `getWithRoot`/`setWithRoot` invocations will step on each other's to
 
 For more examples, see [MethodExampleStatelessTest][4].
 
-[4]: /stephenh/bindgen/blob/master/examples/src/test/java/org/bindgen/example/methods/MethodExampleStatelessTest.java
+[4]: /apidae-tourisme/bindgen/blob/master/examples/src/test/java/org/bindgen/example/methods/MethodExampleStatelessTest.java
 
 Gotchas
 =======
@@ -117,10 +139,8 @@ Todo
 * Document options, `fixRawTypes`, `bindgen.log`, etc.
 * Package a `bindgen-profiled` that has post-processed/something basic wall clock timing for performance analysis
 * Make `Util.resolveTypeVarIfPossible` go away in favor of `Types.memberOf` (if possible)
-  * Looks like not--`Types.getMemberOf` doesn't resolve the generic in `setFoo(T foo)` when inherited by a `Child extends Parent<String>`
-  * Probably needs the type `Parent<String>` passed to it, which would mean remembering which super-type we're on instead of using `getAllMembers`
-  * Perhaps this would be solved by having child bindings inherit from the parent, e.g. `ChildBindingPath extends ParentBindingPath<String>`
+    * Looks like not--`Types.getMemberOf` doesn't resolve the generic in `setFoo(T foo)` when inherited by a `Child extends Parent<String>`
+    * Probably needs the type `Parent<String>` passed to it, which would mean remembering which super-type we're on instead of using `getAllMembers`
+    * Perhaps this would be solved by having child bindings inherit from the parent, e.g. `ChildBindingPath extends ParentBindingPath<String>`
 * Move most `Binding` methods behind a `asBound` method so that generated bindings don't have a polluted name space
 * Add `Binding.getTag/setTag` for attaching metadata to binding instances (like gwt-mpv properties)
-
-
