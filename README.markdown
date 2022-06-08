@@ -1,26 +1,4 @@
 
-Usage
-=====
-
-Import dependency using maven:
-
-    <dependencyManagement>
-      <dependencies>
-          <dependency>
-            <groupId>org.bindgen</groupId>
-            <artifactId>bindgen</artifactId>
-            <version>3.1.2</version>
-          </dependency>
-      </dependencies>
-    </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>bucket-release-repo</id>
-            <url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
-        </repository>
-    </repositories>
-
 Intro
 =====
 
@@ -61,7 +39,7 @@ Annotations
 
 Bindgen is implemented as JDK6 annotation processor. When configured in your IDE (e.g. with project-specific settings in Eclipse), as soon as you add a `@Bindable` annotation to a class `Foo`, and hit save, the IDE immediately invokes the [Processor][2] behind the scenes and `FooBinding` is created.
 
-[2]: /processor/src/main/java/org/bindgen/processor/Processor.java
+[2]: /stephenh/bindgen/blob/master/processor/src/main/java/org/bindgen/processor/Processor.java
 
 Another Example
 ===============
@@ -118,29 +96,16 @@ None of the `getWithRoot`/`setWithRoot` invocations will step on each other's to
 
 For more examples, see [MethodExampleStatelessTest][4].
 
-[4]: /examples/src/test/java/org/bindgen/example/methods/MethodExampleStatelessTest.java
-
-Gotchas
-=======
-
-* Eclipse: 3.5 works best--3.4 has several bugs that were fixed (see [263985][3])
-* Eclipse: Annotating packages does not work
-* Eclipse: Must be run *on* a JDK6 JVM--for Macs, this means 3.5 64-bit on the Apple 64-bit JDK6
-* IntelliJ: Has mediocre support for annotation processors (last I checked)
-* `javac`: Does not properly re-use already-generated classes, so pass `-AskipExistingBindingCheck=true` to re-generate all of the binding classes each time
-
-[3]: https://bugs.eclipse.org/bugs/show_bug.cgi?id=263985
+[4]: /stephenh/bindgen/blob/master/examples/src/test/java/org/bindgen/example/methods/MethodExampleStatelessTest.java
 
 Todo
 ====
 
-* Support extension methods, e.g. StringBinding could have extra methods like `length()`, `substring()`, etc., ideally configurable - done.
-* Optional null-safe get/set, e.g. `eb.employer().name()` with a null `employer` could have `get()` return `null` and not NPE and `set()` could create a `new Employer()` to then call `setName()` on to again avoid the NPE
 * Document options, `fixRawTypes`, `bindgen.log`, etc.
 * Package a `bindgen-profiled` that has post-processed/something basic wall clock timing for performance analysis
 * Make `Util.resolveTypeVarIfPossible` go away in favor of `Types.memberOf` (if possible)
-    * Looks like not--`Types.getMemberOf` doesn't resolve the generic in `setFoo(T foo)` when inherited by a `Child extends Parent<String>`
-    * Probably needs the type `Parent<String>` passed to it, which would mean remembering which super-type we're on instead of using `getAllMembers`
-    * Perhaps this would be solved by having child bindings inherit from the parent, e.g. `ChildBindingPath extends ParentBindingPath<String>`
+  * Looks like not--`Types.getMemberOf` doesn't resolve the generic in `setFoo(T foo)` when inherited by a `Child extends Parent<String>`
+  * Probably needs the type `Parent<String>` passed to it, which would mean remembering which super-type we're on instead of using `getAllMembers`
+  * Perhaps this would be solved by having child bindings inherit from the parent, e.g. `ChildBindingPath extends ParentBindingPath<String>`
 * Move most `Binding` methods behind a `asBound` method so that generated bindings don't have a polluted name space
 * Add `Binding.getTag/setTag` for attaching metadata to binding instances (like gwt-mpv properties)
