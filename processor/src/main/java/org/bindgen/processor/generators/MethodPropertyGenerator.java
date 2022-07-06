@@ -117,16 +117,25 @@ public class MethodPropertyGenerator extends AbstractGenerator implements Proper
 		return ((ExecutableType) this.method.asType()).getReturnType().getKind() == TypeKind.VOID;
 	}
 
+	private String getTypeValue() {
+		if (this.property.isForGenericTypeParameter() || this.property.isArray()) {
+			return "null";
+		}
+		return String.format("%s.class", this.property.getReturnableType());
+	}
+
 	@Override
 	protected void addOuterClassGet() {
+		String type = this.getTypeValue();
+		
 		if (this.property.name.getDeclaredType() != null
 				&& !this.property.name.getDeclaredType().getTypeArguments().isEmpty()) {
 			GMethod fieldGet = this.outerClass.getMethod(this.property.getName() + "()");
 			fieldGet.setAccess(Util.getAccess(this.method));
 			fieldGet.returnType(this.property.getBindingClassFieldDeclaration());
 			fieldGet.body.line("if (this.{} == null) {", this.property.getName());
-			fieldGet.body.line("    this.{} = new {}();", this.property.getName(),
-					this.property.getBindingRootClassInstantiation());
+			fieldGet.body.line("    this.{} = new {}({});", this.property.getName(),
+					this.property.getBindingRootClassInstantiation(), this.getTypeValue());
 			fieldGet.body.line("}");
 			fieldGet.body.line("return this.{};", this.property.getName());
 		} else {
@@ -140,13 +149,6 @@ public class MethodPropertyGenerator extends AbstractGenerator implements Proper
 				fieldGet.typeParameters("U0");
 			}
 			fieldGet.body.line("if (this.{} == null) {", this.property.getName());
-
-			String type;
-			if (this.property.isForGenericTypeParameter() || this.property.isArray()) {
-				type = "null";
-			} else {
-				type = String.format("%s.class", this.property.getReturnableType());
-			}
 
 			String setterLambda = "null /* (item, value) -> item.{}(value) */";
 			if (this.hasSetterMethod()) {
@@ -196,6 +198,7 @@ public class MethodPropertyGenerator extends AbstractGenerator implements Proper
 	}
 
 	private void addInnerClassGetName() {
+		this.innerClass.getConstructor("Class<?> clazz").body.line("super(clazz);");
 		GMethod getName = this.innerClass.getMethod("getName").returnType(String.class).addAnnotation("@Override");
 		getName.body.line("return \"{}\";", this.property.getName());
 	}

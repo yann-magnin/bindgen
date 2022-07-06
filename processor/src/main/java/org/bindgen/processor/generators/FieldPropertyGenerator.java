@@ -66,13 +66,20 @@ public class FieldPropertyGenerator extends AbstractGenerator implements Propert
 		this.outerClass.getField(this.property.getName()).type(this.property.getBindingClassFieldDeclaration());
 	}
 
+	private String getTypeValue() {
+		if (this.property.isForGenericTypeParameter() || this.property.isArray()) {
+			return "null";
+		}
+		return String.format("%s.class", this.property.getReturnableType());
+	}
+
 	private void addOuterOldClassGet() {
 		GMethod fieldGet = this.outerClass.getMethod(this.property.getName() + "()");
 		fieldGet.setAccess(Util.getAccess(this.field));
 		fieldGet.returnType(this.property.getBindingClassFieldDeclaration());
 		fieldGet.body.line("if (this.{} == null) {", this.property.getName());
-		fieldGet.body.line("    this.{} = new {}();", this.property.getName(),
-				this.property.getBindingRootClassInstantiation());
+		fieldGet.body.line("    this.{} = new {}({});", this.property.getName(),
+				this.property.getBindingRootClassInstantiation(), this.getTypeValue());
 		fieldGet.body.line("}");
 		fieldGet.body.line("return this.{};", this.property.getName());
 	}
@@ -94,12 +101,7 @@ public class FieldPropertyGenerator extends AbstractGenerator implements Propert
 			}
 			fieldGet.body.line("if (this.{} == null) {", this.property.getName());
 
-			String type;
-			if (this.property.isForGenericTypeParameter() || this.property.isArray()) {
-				type = "null";
-			} else {
-				type = String.format("%s.class", this.property.getReturnableType());
-			}
+			String type = this.getTypeValue();
 
 			String setterLambda = "null /* (item, value) -> item.{}(value) */";
 			// if (this.hasSetterMethod()) {
@@ -149,6 +151,7 @@ public class FieldPropertyGenerator extends AbstractGenerator implements Propert
 	}
 
 	private void addInnerClassGetName() {
+		this.innerClass.getConstructor("Class<?> clazz").body.line("super(clazz);");
 		GMethod getName = this.innerClass.getMethod("getName").returnType(String.class).addAnnotation("@Override");
 		getName.body.line("return \"{}\";", this.property.getName());
 	}
@@ -168,16 +171,16 @@ public class FieldPropertyGenerator extends AbstractGenerator implements Propert
 
 	private void addInnerClassGetWithRoot() {
 		GMethod getWithRoot = this.innerClass.getMethod("getWithRoot");
-		getWithRoot.argument(property.getBoundClass().getRootTypeArgument(), "root")
-			.returnType(this.property.getSetType()).addAnnotation("@Override");
+		getWithRoot.argument(this.property.getBoundClass().getRootTypeArgument(), "root")
+				.returnType(this.property.getSetType()).addAnnotation("@Override");
 		getWithRoot.body.line("return {}{}.this.getWithRoot(root).{};", //
 				this.property.getCastForReturnIfNeeded(), this.outerClass.getSimpleName(), this.fieldName);
 	}
 
 	private void addInnerClassGetSafelyWithRoot() {
 		GMethod m = this.innerClass.getMethod("getSafelyWithRoot");
-		m.argument(property.getBoundClass().getRootTypeArgument(), "root")
-			.returnType(this.property.getSetType()).addAnnotation("@Override");
+		m.argument(this.property.getBoundClass().getRootTypeArgument(), "root").returnType(this.property.getSetType())
+				.addAnnotation("@Override");
 		m.body.line("if ({}.this.getSafelyWithRoot(root) == null) {", this.outerClass.getSimpleName());
 		m.body.line("    return null;");
 		m.body.line("} else {");
@@ -199,10 +202,8 @@ public class FieldPropertyGenerator extends AbstractGenerator implements Propert
 
 	private void addInnerClassSetWithRoot() {
 		GMethod setWithRoot = this.innerClass.getMethod("setWithRoot({} root, {} {})",
-			property.getBoundClass().getRootTypeArgument(),
-			this.property.getSetType(),
-			this.property.getName()
-		);
+				this.property.getBoundClass().getRootTypeArgument(), this.property.getSetType(),
+				this.property.getName());
 		setWithRoot.addAnnotation("@Override");
 		if (this.isFinal) {
 			setWithRoot.body.line("throw new RuntimeException(this.getName() + \" is read only\");");

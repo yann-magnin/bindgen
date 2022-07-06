@@ -30,6 +30,10 @@ public class GenericObjectBindingPath<R, P, T> extends AbstractBinding<R, P, T> 
 	public GenericObjectBindingPath() {
 	}
 
+	public GenericObjectBindingPath(Class<?> clazz) {
+		super(clazz);
+	}
+
 	public GenericObjectBindingPath(String name, Class<?> type, BindingRoot<R, P> parentBinding, Getter<P, T> getter,
 			Setter<P, T> setter) {
 		super(name, type, parentBinding, getter, setter);
