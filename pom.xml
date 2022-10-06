@@ -9,6 +9,10 @@
 
 	<name>Bindgen (parent)</name>
 
+	<properties>
+		<maven.compiler.release>11</maven.compiler.release>
+	</properties>
+
 	<modules>
 		<module>processor</module>
 		<module>examples</module>
@@ -16,12 +20,12 @@
 
 	<build>
 		<extensions>
-        <extension>
-            <groupId>com.gkatzioura.maven.cloud</groupId>
-            <artifactId>s3-storage-wagon</artifactId>
-            <version>2.3</version>
-        </extension>
-    </extensions>
+			<extension>
+				<groupId>com.gkatzioura.maven.cloud</groupId>
+				<artifactId>s3-storage-wagon</artifactId>
+				<version>2.3</version>
+			</extension>
+		</extensions>
 
 		<pluginManagement>
 			<plugins>
@@ -43,20 +47,18 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.10.1</version>
 					<configuration>
-						<source>8</source>
-						<target>8</target>
 						<compilerArgument>-proc:none</compilerArgument>
 						<testCompilerArgument>-proc:none</testCompilerArgument>
 					</configuration>
 				</plugin>
 				<plugin>
-				  <groupId>org.apache.maven.plugins</groupId>
-				  <artifactId>maven-deploy-plugin</artifactId>
-				  <configuration>
-				    <skip>false</skip>
-				  </configuration>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<configuration>
+						<skip>false</skip>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -64,28 +66,28 @@
 
 	<repositories>
 		<repository>
-				<id>bucket-release-repo</id>
-				<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
+			<id>bucket-release-repo</id>
+			<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
 		</repository>
 	</repositories>
 
 
 	<distributionManagement>
-	    <snapshotRepository>
-	        <id>snapshot-bucket</id>
-	        <url>s3://apidae-sit-packages/snapshot</url>
-	    </snapshotRepository>
-	    <repository>
-	        <id>release-bucket</id>
-	        <url>s3://apidae-sit-packages/release</url>
-	    </repository>
+		<snapshotRepository>
+			<id>snapshot-bucket</id>
+			<url>s3://apidae-sit-packages/snapshot</url>
+		</snapshotRepository>
+		<repository>
+			<id>release-bucket</id>
+			<url>s3://apidae-sit-packages/release</url>
+		</repository>
 	</distributionManagement>
 
 	<scm>
 		<url>git@github.com:apidae-tourisme/bindgen.git</url>
 		<connection>scm:git:git@github.com:apidae-tourisme/bindgen.git</connection>
 		<developerConnection>scm:git:https://github.com/apidae-tourisme/bindgen.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 </project>

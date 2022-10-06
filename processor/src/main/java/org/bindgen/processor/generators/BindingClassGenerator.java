@@ -5,14 +5,16 @@ import static org.bindgen.processor.CurrentEnv.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
 
@@ -108,39 +110,32 @@ public class BindingClassGenerator {
 		// - Setter<P, T> setter
 		// call parent constructor with same args
 
-		final String rootTypeArgument = name.getRootTypeArgument();
-		final String parentTypeArgument = name.getParentTypeArgument();
+		final String rootTypeArgument = this.name.getRootTypeArgument();
+		final String parentTypeArgument = this.name.getParentTypeArgument();
 
-		this.pathBindingClass.getConstructor(
-			new Argument(String.class.getName(), "name"),
-			new Argument(String.format("%1$s<?>", Class.class.getName()), "type"),
-			new Argument(
-				String.format("%1$s<%2$s, %3$s>", BindingRoot.class.getName(), rootTypeArgument, parentTypeArgument),
-				"parentBinding"),
-			new Argument(
-				String.format("%1$s<%3$s, %2$s>", Getter.class.getName(), this.name.get().toString(), parentTypeArgument),
-				"getter"),
-			new Argument(
-				String.format("%1$s<%3$s, %2$s>", Setter.class.getName(), this.name.get().toString(), parentTypeArgument),
-				"setter"))
-			.setBody("super(name, type, parentBinding, getter, setter);\n");
+		this.pathBindingClass
+				.getConstructor(new Argument(String.class.getName(), "name"),
+						new Argument(String.format("%1$s<?>", Class.class.getName()), "type"),
+						new Argument(String.format("%1$s<%2$s, %3$s>", BindingRoot.class.getName(), rootTypeArgument,
+								parentTypeArgument), "parentBinding"),
+						new Argument(String.format("%1$s<%3$s, %2$s>", Getter.class.getName(),
+								this.name.get().toString(), parentTypeArgument), "getter"),
+						new Argument(String.format("%1$s<%3$s, %2$s>", Setter.class.getName(),
+								this.name.get().toString(), parentTypeArgument), "setter"))
+				.setBody("super(name, type, parentBinding, getter, setter);\n");
 		// another constructor without type argument
-		this.pathBindingClass.getConstructor(
-			new Argument(String.class.getName(), "name"),
-			new Argument(
-				String.format("%1$s<%2$s, %3$s>", BindingRoot.class.getName(), rootTypeArgument, parentTypeArgument),
-				"parentBinding"),
-			new Argument(
-				String.format("%1$s<%3$s, %2$s>", Getter.class.getName(), this.name.get().toString(), parentTypeArgument),
-				"getter"),
-			new Argument(
-				String.format("%1$s<%3$s, %2$s>", Setter.class.getName(), this.name.get().toString(), parentTypeArgument),
-				"setter"))
-		.setBody("super(name, parentBinding, getter, setter);\n");
+		this.pathBindingClass
+				.getConstructor(new Argument(String.class.getName(), "name"),
+						new Argument(String.format("%1$s<%2$s, %3$s>", BindingRoot.class.getName(), rootTypeArgument,
+								parentTypeArgument), "parentBinding"),
+						new Argument(String.format("%1$s<%3$s, %2$s>", Getter.class.getName(),
+								this.name.get().toString(), parentTypeArgument), "getter"),
+						new Argument(String.format("%1$s<%3$s, %2$s>", Setter.class.getName(),
+								this.name.get().toString(), parentTypeArgument), "setter"))
+				.setBody("super(name, parentBinding, getter, setter);\n");
 		// same only with type
-		this.pathBindingClass.getConstructor(
-				new Argument(String.format("%1$s<?>", Class.class.getName()), "type"))
-			.setBody("super(type);\n");
+		this.pathBindingClass.getConstructor(new Argument(String.format("%1$s<?>", Class.class.getName()), "type"))
+				.setBody("super(type);\n");
 	}
 
 	/**
@@ -154,8 +149,8 @@ public class BindingClassGenerator {
 	}
 
 	/**
-	 * getWithRoot() custom method implementation (return root instead of calling
-	 * parent binding)
+	 * getWithRoot() custom method implementation (return root instead of
+	 * calling parent binding)
 	 */
 	private void addGetWithRoot() {
 		GMethod getWithRoot = this.rootBindingClass.getMethod("getWithRoot").argument(this.name.get(), "root")
@@ -188,8 +183,8 @@ public class BindingClassGenerator {
 	}
 
 	/**
-	 * Two constructors: root-less (noargs) or root-aware (one-arg); type is passed
-	 * to parent constructor
+	 * Two constructors: root-less (noargs) or root-aware (one-arg); type is
+	 * passed to parent constructor
 	 */
 	private void addConstructors() {
 		this.rootBindingClass.getConstructor().body.line("super({}.class);\n", this.name.getTypeWithoutGenerics());

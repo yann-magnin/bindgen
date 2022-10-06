@@ -16,8 +16,10 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.SimpleTypeVisitor8;
 import javax.lang.model.util.Types;
+
+import org.bindgen.processor.CurrentEnv;
 
 import joist.sourcegen.Access;
 import joist.util.Inflector;
@@ -26,16 +28,19 @@ public class Util {
 
 	private static final Pattern lowerCase = Pattern.compile("^[a-z]");
 	private static final String[] javaKeywords = "abstract,continue,for,new,switch,assert,default,goto,package,synchronized,boolean,do,if,private,this,break,double,implements,protected,throw,byte,else,import,public,throws,case,enum,instanceof,return,transient,catch,extends,int,short,try,char,final,interface,static,void,class,finally,long,strictfp,volatile,const,float,native,super,while,null"
-		.split(",");
-	private static final String[] objectMethodNames = { "hashCode", "toString", "clone", "notify", "notifyAll", "wait", "finalize" };
-	private static final String[] bindingMethodNames = { "get", "getPath", "getType", "getParentBinding", "getChildBindings", "getIsSafe", "getSafely" };
+			.split(",");
+	private static final String[] objectMethodNames = { "hashCode", "toString", "clone", "notify", "notifyAll", "wait",
+			"finalize" };
+	private static final String[] bindingMethodNames = { "get", "getPath", "getType", "getParentBinding",
+			"getChildBindings", "getIsSafe", "getSafely" };
 
 	// Watch for package.Foo.Inner -> package.foo.Inner
 	public static String lowerCaseOuterClassNames(Element bindableClass, String className) {
 		boolean isTypeElement = bindableClass.getKind().isClass() || bindableClass.getKind().isInterface();
 		if (isTypeElement) {
 			ElementKind enclosingKind = ((TypeElement) bindableClass).getEnclosingElement().getKind();
-			if (enclosingKind == ElementKind.CLASS || enclosingKind == ElementKind.INTERFACE || enclosingKind == ElementKind.ENUM) {
+			if (enclosingKind == ElementKind.CLASS || enclosingKind == ElementKind.INTERFACE
+					|| enclosingKind == ElementKind.ENUM) {
 				String outerClassName = bindableClass.getEnclosingElement().getSimpleName().toString();
 				if (lowerCase.matcher(outerClassName).find()) {
 					className = className.replace(outerClassName, "bindgen_" + outerClassName);
@@ -63,7 +68,8 @@ public class Util {
 
 	/**
 	 * @param current the type element of the element having bindings generated
-	 * @param currentOrSuper the type or super type element of the element having bindings generated
+	 * @param currentOrSuper the type or super type element of the element
+	 * having bindings generated
 	 * @param enclosed the field or method element
 	 */
 	public static boolean isAccessibleIfGenerated(TypeElement current, Element enclosed) {
@@ -72,7 +78,8 @@ public class Util {
 		boolean isPrivate = enclosed.getModifiers().contains(Modifier.PRIVATE);
 		boolean isPublic = enclosed.getModifiers().contains(Modifier.PUBLIC);
 		boolean inJava = currentOrSuper.getQualifiedName().toString().startsWith("java.");
-		boolean superSamePackage = getElementUtils().getPackageOf(currentOrSuper).equals(getElementUtils().getPackageOf(current));
+		boolean superSamePackage = getElementUtils().getPackageOf(currentOrSuper)
+				.equals(getElementUtils().getPackageOf(current));
 		boolean innerClass = currentOrSuper.getEnclosingElement().getKind() != ElementKind.PACKAGE;
 		return !isStatic && !isPrivate && (isPublic || (superSamePackage && !inJava && !innerClass));
 	}
@@ -115,11 +122,21 @@ public class Util {
 	 * @return
 	 */
 	public static String getTypeName(TypeMirror type) {
-		return type.accept(new SimpleTypeVisitor6<String, Void>(type.toString()) {
+		return type.accept(new SimpleTypeVisitor8<String, Void>(type.toString()) {
 
 			@Override
 			public String visitDeclared(DeclaredType t, Void p) {
-				return t.toString();
+				// with java 11, previous implementation - t.toString() -
+				// no longer works as it includes annotations
+				// in AnnotatedTypeUseTest, it generates
+				// @org.bindgen.processor.annotatedtypeuse.TypeAnnotation
+				// java.lang.String
+				// this new implementation creates a new declared type from type
+				// element and arguments
+				// so that it strips annotation
+				return CurrentEnv.getTypeUtils()
+						.getDeclaredType((TypeElement) t.asElement(), t.getTypeArguments().toArray(new TypeMirror[0]))
+						.toString();
 			}
 
 		}, null);
@@ -159,7 +176,8 @@ public class Util {
 			if (currentType.getKind() != TypeKind.NONE) {
 				found.add(currentType);
 				Element currentElement = getTypeUtils().asElement(currentType);
-				if (currentElement.getKind() == ElementKind.CLASS || currentElement.getKind() == ElementKind.INTERFACE) {
+				if (currentElement.getKind() == ElementKind.CLASS
+						|| currentElement.getKind() == ElementKind.INTERFACE) {
 					TypeElement currentTypeElement = (TypeElement) currentElement;
 					todo.add(currentTypeElement.getSuperclass());
 					todo.addAll(currentTypeElement.getInterfaces());
@@ -179,11 +197,11 @@ public class Util {
 	 * DTO for multiple return values from {@code resolveTypeVarIfPossible}.
 	 *
 	 * Eclipse will produce NPE-prone TypeMirrors if we use
-	 * {@link Types#getDeclaredType(TypeElement, TypeMirror...)} willy
-	 * nilly. So we pass around a {@code wasReplaced} variable about
-	 * whether we have actually done a type var resolution and, if not,
-	 * skip the {@code getDeclaredType} call and return the original,
-	 * NPE-avoiding, TypeMirror.
+	 * {@link Types#getDeclaredType(TypeElement, TypeMirror...)} willy nilly. So
+	 * we pass around a {@code wasReplaced} variable about whether we have
+	 * actually done a type var resolution and, if not, skip the
+	 * {@code getDeclaredType} call and return the original, NPE-avoiding,
+	 * TypeMirror.
 	 */
 	public static class ResolveResult {
 		public final TypeMirror type;
@@ -227,9 +245,12 @@ public class Util {
 			boolean found = false;
 			int foundAt = 0;
 
-			// Go TypeMirror (bound type vars) -> Element -> TypeMirror (unbound type vars)
-			// so that we can compare the possibly-unbound <code>type</code> parameter
-			// with the unbound TypeMirror, get the right index, and then jump back to
+			// Go TypeMirror (bound type vars) -> Element -> TypeMirror (unbound
+			// type vars)
+			// so that we can compare the possibly-unbound <code>type</code>
+			// parameter
+			// with the unbound TypeMirror, get the right index, and then jump
+			// back to
 			// our bound TypeMirror
 			TypeMirror superGeneric = getTypeUtils().asElement(superType).asType();
 			if (superGeneric.getKind() == TypeKind.DECLARED) {
