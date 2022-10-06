@@ -51,15 +51,13 @@ public class BindgenConfig {
 	 * Check if a type binding already exists. Allow to use bindings from
 	 * dependencies.
 	 *
-	 * @param name
-	 *            - type name to search
-	 * @param element
-	 *            - enclosing element
+	 * @param name - type name to search
+	 * @param element - enclosing element
 	 * @return true if a ...BindingPath already exists
 	 */
 	public boolean existsFieldTypeBindingFor(ClassName name, Element element) {
-		String bindingPathClassName = Util.lowerCaseOuterClassNames(element, getConfig().baseNameForBinding(name)
-				+ "BindingPath");
+		String bindingPathClassName = Util.lowerCaseOuterClassNames(element,
+				getConfig().baseNameForBinding(name) + "BindingPath");
 		try {
 			Class.forName(bindingPathClassName);
 			return true;
@@ -102,7 +100,7 @@ public class BindgenConfig {
 
 	/**
 	 * @return the fully qualified name of the super class of all Bindings -
-	 *         useful for integration
+	 * useful for integration
 	 */
 	public String bindingPathSuperClassName() {
 		return this.options.get("bindingPathSuperClass");
@@ -110,7 +108,7 @@ public class BindgenConfig {
 
 	/**
 	 * @return a list of class names to match void methods against for callable
-	 *         bindings
+	 * bindings
 	 */
 	public String[] blockTypesToAttempt() {
 		String attempts = this.options.get("blockTypes");
@@ -124,7 +122,7 @@ public class BindgenConfig {
 
 	/**
 	 * @return whether the {@code @Generated} annotations should be added to the
-	 *         source output
+	 * source output
 	 */
 	public boolean skipGeneratedTimestamps() {
 		return this.isEnabled("skipGeneratedTimestamps");
@@ -132,7 +130,7 @@ public class BindgenConfig {
 
 	/**
 	 * @return whether the field/method {@code name} of {@code element} should
-	 *         be skipped
+	 * be skipped
 	 */
 	public boolean skipAttribute(Element element, String name) {
 		return this.isEnabled("skipAttribute." + element.toString() + "." + name);
@@ -159,10 +157,14 @@ public class BindgenConfig {
 	private Scope<ClassName> getBindingExclude() {
 		String scopeExpression = this.options.get(EXCLUDE_PARAM);
 
+//		with java 11, ModuleDescriptor (new class) is broken as it contains
+//		embedded-embedded static definitions, to it creates module
+//		org.bindgen.java.lang.module.ModuleDescriptor.class1.Class2Binding
+//		but references it as ModuleDescriptor.Class2Binding in generated classes
 		if (scopeExpression == null) {
-			scopeExpression = "java.util.stream";
+			scopeExpression = "java.lang.module.ModuleDescriptor";
 		} else {
-			scopeExpression += ",java.util.stream";
+			scopeExpression += ",java.lang.module.ModuleDescriptor";
 		}
 
 		return new PackageExpressionScope(scopeExpression);
