@@ -3,7 +3,7 @@ examples-workspace
 target
 **/.classpath
 **/.project
-**/.setting
+**/.settings
 docs/.builddir
 docs/build
 /.idea
