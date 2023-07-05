@@ -40,12 +40,9 @@ public class BoundProperty {
 	public ClassName name;
 
 	/**
-	 * @param enclosed
-	 *            the parent method or field
-	 * @param type
-	 *            our type
-	 * @param propertyName
-	 *            our name on the parent <code>enclosed</code> type
+	 * @param enclosed the parent method or field
+	 * @param type our type
+	 * @param propertyName our name on the parent <code>enclosed</code> type
 	 */
 	public BoundProperty(TypeElement outerElement, BoundClass boundClass, Element enclosed, TypeMirror type,
 			String propertyName) {
@@ -179,7 +176,7 @@ public class BoundProperty {
 
 	/**
 	 * @return whether or not bindgen should generate a binding class for this
-	 *         properties' type
+	 * properties' type
 	 */
 	public boolean shouldGenerateBindingClassForType() {
 		return CurrentEnv.getConfig().shouldGenerateBindingFor(this.name);
@@ -192,22 +189,14 @@ public class BoundProperty {
 	private String getInnerClassSuperClass(boolean replaceWildcards) {
 		// Arrays don't have individual binding classes
 		if (this.isArray()) {
-			return String.format("%s<%s, %s, %s>",
-				getConfig().bindingPathSuperClassName(),
-				this.boundClass.getRootTypeArgument(),
-				this.boundClass.get(),
-				this.type.toString()
-			);
+			return String.format("%s<%s, %s, %s>", getConfig().bindingPathSuperClassName(),
+					this.boundClass.getRootTypeArgument(), this.boundClass.get(), this.type.toString());
 		}
 		// Being a generic type, we have no XxxBindingPath to extend, so just
 		// extend AbstractBinding directly
 		if (this.isForGenericTypeParameter()) {
-			return String.format("%s<%s, %s, %s>",
-				getConfig().bindingPathSuperClassName(),
-				this.boundClass.getRootTypeArgument(),
-				this.boundClass.get(),
-				this.getGenericElement()
-			);
+			return String.format("%s<%s, %s, %s>", getConfig().bindingPathSuperClassName(),
+					this.boundClass.getRootTypeArgument(), this.boundClass.get(), this.getGenericElement());
 		}
 
 		// if our type is outside the binding scope and no existing binding is
@@ -227,12 +216,8 @@ public class BoundProperty {
 																							// use
 																							// it
 		) {
-			return String.format("%s<%s, %s, %s>",
-				GenericObjectBindingPath.class.getName(),
-				this.boundClass.getRootTypeArgument(),
-				this.boundClass.get(),
-				this.type.toString()
-			);
+			return String.format("%s<%s, %s, %s>", GenericObjectBindingPath.class.getName(),
+					this.boundClass.getRootTypeArgument(), this.boundClass.get(), this.type.toString());
 		}
 
 		String superName = Util.lowerCaseOuterClassNames(this.element,
@@ -287,7 +272,7 @@ public class BoundProperty {
 	}
 
 	public BoundClass getBoundClass() {
-		return boundClass;
+		return this.boundClass;
 	}
 
 	public String getName() {
@@ -322,7 +307,7 @@ public class BoundProperty {
 
 	/**
 	 * @return "com.app.Type<String, String>" if the type is
-	 *         "com.app.Type<String, String>"
+	 * "com.app.Type<String, String>"
 	 */
 	public String get() {
 		return this.name.get();
@@ -402,7 +387,7 @@ public class BoundProperty {
 
 	/**
 	 * @return whether the declared type has more type arguments than our usage
-	 *         of it does
+	 * of it does
 	 */
 	private boolean isRawType() {
 		if (this.isFixingRawType) {
@@ -432,7 +417,7 @@ public class BoundProperty {
 	/**
 	 * @param dummyTypes
 	 * @return the toString of {@code tm} with {@code tp} replaced by
-	 *         {@code dummyParameter}
+	 * {@code dummyParameter}
 	 */
 	private static String toStringWithDummyParam(TypeMirror tm, TypeMirror tp, String dummyParameter,
 			Map<TypeMirror, String> dummyTypes) {
