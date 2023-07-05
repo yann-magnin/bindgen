@@ -189,6 +189,33 @@ public class BindgenConfig {
 		this.options.put("skipAttribute.java.lang.Object.getClass", "true");
 		this.options.put("skipAttribute.java.lang.Object.notify", "true");
 		this.options.put("skipAttribute.java.lang.Object.notifyAll", "true");
+
+		// java 17
+		this.options.put("skipAttribute.java.lang.Enum.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Boolean.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Byte.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Character.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Short.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Class.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Double.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Float.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Integer.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Long.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.String.describeConstable", "true");
+		this.options.put("skipAttribute.java.lang.Class.recordComponents", "true");
+
+		// java 19
+		this.options.put("skipAttribute.java.lang.Class.arrayType", "true");
+		this.options.put("skipAttribute.java.lang.Class.componentType", "true");
+		this.options.put("skipAttribute.java.lang.Class.permittedSubclasses", "true");
+		this.options.put("skipAttribute.java.lang.Class.hidden", "true");
+		this.options.put("skipAttribute.java.lang.Class.record", "true");
+		this.options.put("skipAttribute.java.lang.Class.sealed", "true");
+		this.options.put("skipAttribute.java.lang.Class.descriptorString", "true");
+		this.options.put("skipAttribute.java.lang.String.stripIndent", "true");
+		this.options.put("skipAttribute.java.lang.String.translateEscapes", "true");
+		this.options.put("skipAttribute.java.util.stream.Stream.toList", "true");
+
 		this.options.put("bindingPathSuperClass", AbstractBinding.class.getName());
 	}
 
